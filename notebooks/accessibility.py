@@ -34,18 +34,14 @@ class Accessibility:
         Prefix used to load the correct files; only used with bgt_folder.
     """
 
-    def __init__(self, label, ahn_reader,
-                 bgt_file=None, bgt_folder=None, file_prefix='bgt_roads',
-                 grid_size=0.05, min_component_size=5000,
-                 overlap_perc=20, params={}):
-        self.ahn_reader = ahn_reader
+    def __init__(self, label, bgt_file=None, bgt_folder=None,
+    			 file_prefix='bgt_roads', grid_size=0.05,
+    			 min_component_size=5000, overlap_perc=20, params={}):
         self.grid_size = grid_size
         self.min_component_size = min_component_size
         self.overlap_perc = overlap_perc
-        self.params = params
 
-    def _label_car_like_components(self, points, ground_z, point_components,
-                                    min_height, max_height):
+    def _label_car_like_components(self, points, point_components):
         """ Based on certain properties of a car we label clusters.  """
 
         car_mask = np.zeros(len(points), dtype=bool)
@@ -59,9 +55,6 @@ class Accessibility:
         for cc in cc_labels:
             # select points that belong to the cluster
             cc_mask = (point_components == cc)
-
-            target_z = ground_z[cc_mask]
-            valid_values = target_z[np.isfinite(target_z)]
 
             pointjes = np.array(points[cc_mask])[:, :2]
             mbrect, _, mbr_width, mbr_length, _ =\
@@ -113,18 +106,13 @@ class Accessibility:
 
         obstacle_mask = np.zeros((len(mask_ids),), dtype=bool)
 
-        # Get the interpolated ground points of the tile
-        ground_z = self.ahn_reader.interpolate(
-                            tilecode, points[mask], mask, 'ground_surface')
         label = 33 # TODO
         lcc = LabelConnectedComp(label, grid_size=self.grid_size,
                                  min_component_size=self.min_component_size)
         point_components = lcc.get_components(points[mask])
 
         # Label car like clusters
-        car_mask = self._label_car_like_components(points[mask], ground_z,
-                                                   point_components,
-                                                   **self.params)
+        car_mask = self._label_car_like_components(points[mask], point_components)
         label_mask[mask_ids[car_mask]] = True
 
         return label_mask
