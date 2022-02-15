@@ -72,7 +72,7 @@ class Accessibility:
         logger.debug(f'{obstacle_count} obstacles labelled.')
         return obstacle_mask
 
-    def get_obstacle_polygons(self, points, mask, tilecode):
+    def get_obstacle_polygons(self, points, mask):
         """
         Returns the label mask for the given pointcloud.
 
@@ -82,8 +82,6 @@ class Accessibility:
             The point cloud <x, y, z>.
         mask : array of shape (n_points,) with dtype=bool
             Pre-mask used to label only a subset of the points.
-        tilecode : str
-            The CycloMedia tile-code for the given pointcloud.
 
         Returns
         -------
