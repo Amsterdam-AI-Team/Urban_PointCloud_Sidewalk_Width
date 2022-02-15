@@ -22,9 +22,6 @@ class Accessibility:
         Class label to use for this fuser.
     ahn_reader : AHNReader object
         Elevation data reader.
-    bgt_file : str or Path or None (default: None)
-        File containing data files needed for this fuser. Either a file or a
-        folder should be provided, but not both.
     bgt_folder : str or Path or None (default: None)
         Folder containing data files needed for this fuser. Data files are
         assumed to be prefixed by "bgt_roads", unless otherwise specified.
@@ -33,12 +30,9 @@ class Accessibility:
         Prefix used to load the correct files; only used with bgt_folder.
     """
 
-    def __init__(self, bgt_file=None, bgt_folder=None,
-    			 file_prefix='bgt_roads', grid_size=0.05,
-    			 min_component_size=5000, overlap_perc=20, params={}):
+    def __init__(self, grid_size=0.05, min_component_size=5000):
         self.grid_size = grid_size
         self.min_component_size = min_component_size
-        self.overlap_perc = overlap_perc
 
     def _label_obstacles(self, points, point_components):
         """ TODO.  """
