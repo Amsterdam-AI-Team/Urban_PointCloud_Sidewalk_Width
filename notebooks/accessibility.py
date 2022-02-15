@@ -34,18 +34,18 @@ class Accessibility:
         Prefix used to load the correct files; only used with bgt_folder.
     """
 
-    def __init__(self, label, bgt_file=None, bgt_folder=None,
+    def __init__(self, bgt_file=None, bgt_folder=None,
     			 file_prefix='bgt_roads', grid_size=0.05,
     			 min_component_size=5000, overlap_perc=20, params={}):
         self.grid_size = grid_size
         self.min_component_size = min_component_size
         self.overlap_perc = overlap_perc
 
-    def _label_car_like_components(self, points, point_components):
-        """ Based on certain properties of a car we label clusters.  """
+    def _label_obstacles(self, points, point_components):
+        """ TODO.  """
 
-        car_mask = np.zeros(len(points), dtype=bool)
-        car_count = 0
+        obstacle_mask = np.zeros(len(points), dtype=bool)
+        obstacle_count = 0
 
         cc_labels = np.unique(point_components)
 
@@ -67,8 +67,8 @@ class Accessibility:
             poly = Polygon(poly)
 
             listje.append([hull_points.tolist()])
-            car_mask = car_mask | poly_box_clip(points, poly)
-            car_count += 1 # TODO
+            obstacle_mask = obstacle_mask | poly_box_clip(points, poly)
+            obstacle_count += 1
 
         csv_headers = ['obstacle']
         bgt_obstacle_file = '../datasets/bgt/bgt_obstacle_demo.csv'
@@ -76,8 +76,8 @@ class Accessibility:
         # Write the csv
         csv_utils.write_csv(bgt_obstacle_file, listje, csv_headers)
 
-        logger.debug(f'{car_count} cars labelled.')
-        return car_mask
+        logger.debug(f'{obstacle_count} obstacles labelled.')
+        return obstacle_mask
 
     def get_obstacle_polygons(self, points, mask, tilecode):
         """
@@ -111,8 +111,8 @@ class Accessibility:
                                  min_component_size=self.min_component_size)
         point_components = lcc.get_components(points[mask])
 
-        # Label car like clusters
-        car_mask = self._label_car_like_components(points[mask], point_components)
-        label_mask[mask_ids[car_mask]] = True
+        # Label obstacle clusters
+        obstacle_mask = self._label_obstacles(points[mask], point_components)
+        label_mask[mask_ids[obstacle_mask]] = True
 
         return label_mask
