@@ -16,16 +16,11 @@ def read_las(las_path):
 def read_las_m3c2(las_path):
     pointcloud = laspy.read(las_path)
 
-    if 'label' not in pointcloud.point_format.extra_dimension_names:
-        labels = np.zeros((len(pointcloud.x),), dtype='uint16')
-    else:
-        labels = pointcloud.label
-
     m3c2 = pointcloud.m3c2
 
     points = np.vstack((pointcloud.x, pointcloud.y, pointcloud.z)).T
 
-    return points, m3c2, labels
+    return points, m3c2
 
 def merge_las(arr1, arr2):
     # Concatenating operation
@@ -33,7 +28,7 @@ def merge_las(arr1, arr2):
     merged = np.concatenate((arr1, arr2), axis=0)
     return merged[:, [0,1,2]], merged[:, 3]
     
-def write_las(points, labels, las_path):
+def write_las(points, las_path, labels=None):
     """
     Saving the ndarray points data into a .las file.
     :param content: ndarray
@@ -45,7 +40,8 @@ def write_las(points, labels, las_path):
     outfile.x = points[:, 0]
     outfile.y = points[:, 1]
     outfile.z = points[:, 2]
-    outfile.add_extra_dim(laspy.ExtraBytesParams(name="label", type="uint16",
-                          description="Labels"))
-    outfile.label = labels
+    if labels is not None:
+        outfile.add_extra_dim(laspy.ExtraBytesParams(name="label", type="uint16",
+                              description="Labels"))
+        outfile.label = labels
     outfile.write(las_path)
