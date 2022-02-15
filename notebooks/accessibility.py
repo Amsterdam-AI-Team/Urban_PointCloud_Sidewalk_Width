@@ -44,7 +44,7 @@ class Accessibility:
 
         cc_labels = set(cc_labels).difference((-1,))
 
-        listje = []
+        listje = [] # TODO naming
         for cc in cc_labels:
             # select points that belong to the cluster
             cc_mask = (point_components == cc)
@@ -63,11 +63,13 @@ class Accessibility:
             obstacle_mask = obstacle_mask | poly_box_clip(points, poly)
             obstacle_count += 1
 
+        # MOVE!! TODO
         csv_headers = ['obstacle']
         bgt_obstacle_file = '../datasets/bgt/bgt_obstacle_demo.csv'
 
         # Write the csv
         csv_utils.write_csv(bgt_obstacle_file, listje, csv_headers)
+        # MOVE!! TODO
 
         logger.debug(f'{obstacle_count} obstacles labelled.')
         return obstacle_mask
