@@ -1,6 +1,6 @@
 import numpy as np
 
-from upcp.utils import clip_utils # TODO
+from upcp.utils import clip_utils
 
 def get_label_mask(points, mask, tilecode, sidewalk_polygons, ahn_reader, max_obstacle_height):    
     label_mask = np.zeros((len(points),), dtype=bool)
@@ -18,13 +18,13 @@ def get_label_mask(points, mask, tilecode, sidewalk_polygons, ahn_reader, max_ob
         clip_mask = clip_utils.poly_clip(points[mask, :], polygon)
         obstacle_mask = obstacle_mask | clip_mask
 
-    # TODO er wordt ook eronder meegepakt
     if ahn_reader is not None:
         bld_z = ahn_reader.interpolate(
             tilecode, points[mask, :], mask, 'ground_surface')
         bld_z_valid = np.isfinite(bld_z)
-        ahn_mask = (points[mask_ids[bld_z_valid], 2]
-                    <= bld_z[bld_z_valid] + max_obstacle_height) # Alles boven de 4 meter boven de grond
+        # Every point between 0 and max_obstacle_height above ground plane
+        ahn_mask = ((bld_z[bld_z_valid] < points[mask_ids[bld_z_valid], 2]) &
+                    (points[mask_ids[bld_z_valid], 2] <= bld_z[bld_z_valid] + max_obstacle_height))
         obstacle_mask[bld_z_valid] = obstacle_mask[bld_z_valid] & ahn_mask
 
     label_mask[mask_ids[obstacle_mask]] = True
