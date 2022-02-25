@@ -5,10 +5,6 @@ from upcp.utils import clip_utils
 def get_label_mask(points, mask, tilecode, sidewalk_polygons, ahn_reader, max_obstacle_height):    
     label_mask = np.zeros((len(points),), dtype=bool)
 
-    if len(sidewalk_polygons) == 0:
-        print('No sidewalk polygons found for tile, skipping.')
-        return label_mask
-
     if mask is None:
         mask = np.ones((len(points),), dtype=bool)
     mask_ids = np.where(mask)[0]
