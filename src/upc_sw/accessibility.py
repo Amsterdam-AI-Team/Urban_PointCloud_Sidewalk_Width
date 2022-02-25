@@ -91,8 +91,7 @@ class Accessibility:
 
         obstacle_mask = np.zeros((len(mask_ids),), dtype=bool)
 
-        label = 33 # TODO
-        lcc = LabelConnectedComp(label, grid_size=self.grid_size,
+        lcc = LabelConnectedComp(grid_size=self.grid_size,
                                  min_component_size=self.min_component_size)
         point_components = lcc.get_components(points[mask])
 
