@@ -60,3 +60,10 @@ We provide tutorial [notebooks](notebooks) that demonstrate how the code can be 
 ---
 
 This repository was created by [Amsterdam Intelligence](https://amsterdamintelligence.com/) for the City of Amsterdam.
+
+---
+
+## TODOs
+
+- [ ] Update [https://maps.amsterdam.nl/sidewalks/?LANG=en](maps.amsterdam.nl/sidewalks)
+- [ ] Configure M3C2 change detection implementation of [py4dgeo](https://github.com/ssciwr/py4dgeo)
