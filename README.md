@@ -5,8 +5,8 @@ This repository contains a sidewalk width calculation approach by considering st
 <figure align="center">
   <img
   src="media/examples/demo.gif"
-  alt="Example: static obstacles on the sidewalk.">
-  <figcaption><b>Example:</b> static obstacles on the sidewalk.</figcaption>
+  alt="Example: static objects (obstacles) on the sidewalk.">
+  <figcaption><b>Example:</b> static objects (obstacles) on the sidewalk.</figcaption>
 </figure>
 
 ---
