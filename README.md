@@ -2,19 +2,21 @@
 
 This repository contains a sidewalk width calculation approach by considering static obstacles on the sidewalk. This project is part of a broader accessibility project to determine if sidewalks are accessible and make them more inclusive to people with disabilities. Two point cloud datasets are used in this project that were taken of the same area but at different times. First, cadastral reference data is used to filter for the points above the sidewalk. Next, a change detection algorithm, M3C2, is used to identify static objects in the point clouds. Finally, sidewalk width is calculated, inspired by Meli Harvey's [Sidewalk Widths NYC](https://github.com/meliharvey/sidewalkwidths-nyc) project. Please visit their repository to learn more about the calculation.
 
+```
 <figure align="center">
   <img
   src="media/examples/demo.gif"
   alt="Example: static objects (obstacles) on the sidewalk.">
   <figcaption><b>Example:</b> static objects (obstacles) on the sidewalk.</figcaption>
 </figure>
+```
 
-<br/> 
+```
 | ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
 |:---:|:---:|:---:|
 
 <b>Example:</b> calculate sidewalk width using skeletons and centerlines
-
+```
 
 ---
 
