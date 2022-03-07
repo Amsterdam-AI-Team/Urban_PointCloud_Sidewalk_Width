@@ -11,6 +11,7 @@ This repository contains a sidewalk width calculation approach by considering st
 
 | ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
 |:---:|:---:|:---:|
+
 <b>Example:</b> calculate sidewalk width using skeletons and centerlines
 
 
