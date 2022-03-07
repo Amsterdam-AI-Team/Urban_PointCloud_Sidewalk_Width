@@ -9,6 +9,11 @@ This repository contains a sidewalk width calculation approach by considering st
   <figcaption><b>Example:</b> static objects (obstacles) on the sidewalk.</figcaption>
 </figure>
 
+| ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
+|:---:|:---:|:---:|
+<b>Example:</b> calculate sidewalk width using skeletons and centerlines
+
+
 ---
 
 ## Folder Structure
@@ -43,14 +48,6 @@ This repository contains a sidewalk width calculation approach by considering st
 4. Finally, install `cccorelib` and `pycc` by following the [instructions on their GitHub page](https://github.com/tmontaigu/CloudCompare-PythonPlugin/blob/master/docs/building.rst#building-as-independent-wheels). Please note, these two packages are not available on the Python Package Index (PyPi).
 
 5. Check out the [notebooks](notebooks) for a demonstration.
-
----
-
-## Calculate sidewalk width using skeletons and centerlines
-TODO
-
-| ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
-|:---:|:---:|:---:|
 
 ---
 
