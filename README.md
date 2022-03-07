@@ -65,5 +65,5 @@ This repository was created by [Amsterdam Intelligence](https://amsterdamintelli
 
 ## TODOs
 
-- [ ] Update [https://maps.amsterdam.nl/sidewalks/?LANG=en](maps.amsterdam.nl/sidewalks)
+- [ ] Update [maps.amsterdam.nl/sidewalks](https://maps.amsterdam.nl/sidewalks/?LANG=en)
 - [ ] Configure M3C2 change detection implementation of [py4dgeo](https://github.com/ssciwr/py4dgeo)
