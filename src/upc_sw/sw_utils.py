@@ -11,7 +11,7 @@ def sidewalk_clip(points, tilecode, sw_poly_reader,
     sw_polys = sw_poly_reader.filter_tile(tilecode, bgt_types=['voetpad'],
                                           merge=True)
     if len(sw_polys) == 0:
-        print('No sidewalk poygons for tile.')
+        print(f'No sidewalk polygons for tile {tilecode}.')
         return sw_mask
 
     for polygon in sw_polys:
