@@ -1,20 +1,16 @@
 import numpy as np
 from shapely.geometry import Polygon
-import ast
-import logging
 from scipy.spatial import ConvexHull
-import matplotlib.pyplot as plt
 
-import upcp.utils.csv_utils as csv_utils
 from upcp.region_growing.label_connected_comp import LabelConnectedComp
 from upcp.utils.math_utils import minimum_bounding_rectangle
-from upcp.utils.las_utils import get_bbox_from_tile_code
 from upcp.utils.clip_utils import poly_box_clip
 
+import logging
 logger = logging.getLogger(__name__)
 
 
-class Accessibility:
+class SideWalkWidth:
     """
     Parameters
     ----------
