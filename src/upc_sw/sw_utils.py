@@ -3,6 +3,9 @@ import laspy
 
 from upcp.utils import clip_utils
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def sidewalk_clip(points, tilecode, sw_poly_reader,
                   ahn_reader=None, max_height=2.0):
@@ -11,7 +14,7 @@ def sidewalk_clip(points, tilecode, sw_poly_reader,
     sw_polys = sw_poly_reader.filter_tile(tilecode, bgt_types=['voetpad'],
                                           merge=True)
     if len(sw_polys) == 0:
-        print(f'No sidewalk polygons for tile {tilecode}.')
+        logging.info(f'No sidewalk polygons for tile {tilecode}.')
         return sw_mask
 
     for polygon in sw_polys:
@@ -42,8 +45,8 @@ def sidewalk_clip(points, tilecode, sw_poly_reader,
         #     ahn_mask[~gnd_z_valid][inval_mask] = True
         sw_mask[sw_ids] = ahn_mask
 
-    print(f'{np.count_nonzero(sw_mask)} points clipped in '
-          + f'{len(sw_polys)} sidewalk polygons.')
+    logging.info(f'{np.count_nonzero(sw_mask)} points clipped in '
+                 + f'{len(sw_polys)} sidewalk polygons.')
 
     return sw_mask
 
