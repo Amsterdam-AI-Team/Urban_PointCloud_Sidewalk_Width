@@ -1,7 +1,10 @@
 import numpy as np
 from scipy.spatial import ConvexHull
+from shapely.geometry import MultiPolygon
 
 from upcp.region_growing.label_connected_comp import LabelConnectedComp
+
+from upc_sw.alpha_shape import alpha_shape
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,9 +15,12 @@ class Cluster2Polygon:
     TODO
     """
 
-    def __init__(self, grid_size=0.05, min_component_size=100):
+    def __init__(self, grid_size=0.05, min_component_size=100,
+                 use_concave=False, alpha=0.5):
         self.grid_size = grid_size
         self.min_component_size = min_component_size
+        self.use_concave = use_concave
+        self.alpha = alpha
         self.lcc = LabelConnectedComp(
                                 grid_size=self.grid_size,
                                 min_component_size=self.min_component_size)
@@ -43,10 +49,21 @@ class Cluster2Polygon:
             # select points that belong to the cluster
             cc_mask = (point_components == cc)
             cc_points = points[cc_mask, :2]
-            hull_points = cc_points[ConvexHull(cc_points).vertices]
-            obstacle_polygons.append(hull_points.tolist())
             # TODO: use labels to determine obstacle type.
-            obstacle_types.append('obstacle')
+            obstacle_type = 'obstacle'
+            if self.use_concave:
+                hull, _ = alpha_shape(cc_points, alpha=0.5)
+                if type(hull) == MultiPolygon:
+                    for part in hull.geoms:
+                        obstacle_polygons.append(part)
+                        obstacle_types.append(obstacle_type)
+                else:
+                    obstacle_polygons.append(hull)
+                    obstacle_types.append(obstacle_type)
+            else:
+                hull_points = cc_points[ConvexHull(cc_points).vertices]
+                obstacle_polygons.append(hull_points.tolist())
+                obstacle_types.append(obstacle_type)
 
         logger.debug(f'{len(obstacle_polygons)} obstacles polygons extracted.')
 
