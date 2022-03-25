@@ -4,14 +4,11 @@ from shapely.ops import nearest_points
 
 
 def remove_short_lines(line):
-
     if line.type == 'MultiLineString':
-
         passing_lines = []
 
-        for i, linestring in enumerate(line):
-
-            other_lines = MultiLineString([x for j, x in enumerate(line)
+        for i, linestring in enumerate(line.geoms):
+            other_lines = MultiLineString([x for j, x in enumerate(line.geoms)
                                           if j != i])
 
             p0 = Point(linestring.coords[0])
@@ -39,41 +36,34 @@ def linestring_to_segments(linestring):
 
 
 def get_segments(line):
-
     line_segments = []
 
     if line.type == 'MultiLineString':
-
         for linestring in line.geoms:
-
             line_segments.extend(linestring_to_segments(linestring))
 
     if line.type == 'LineString':
-
         line_segments.extend(linestring_to_segments(line))
 
     return line_segments
 
 
 def interpolate_by_distance(linestring):
-
     distance = 1
     all_points = []
     count = round(linestring.length / distance) + 1
 
     if count == 1:
         all_points.append(linestring.interpolate(linestring.length / 2))
-
     else:
         for i in range(count):
             all_points.append(linestring.interpolate(distance * i))
 
     return all_points
 
+
 def interpolate(line):
-
     if line.type == 'MultiLineString':
-
         all_points = []
 
         for linestring in line:
@@ -86,24 +76,21 @@ def interpolate(line):
 
 
 def polygon_to_multilinestring(polygon):
-
     return MultiLineString([polygon.exterior] + [line for line in
                                                  polygon.interiors])
 
 
 def get_avg_distances(row):
-
     avg_distances = []
 
     sidewalk_lines = polygon_to_multilinestring(row.geometry)
 
     for segment in row.segments:
-
         points = interpolate(segment)
 
         distances = []
 
-        for point in points:
+        for point in points.geoms:
             p1, p2 = nearest_points(sidewalk_lines, point)
             distances.append(p1.distance(p2))
 
