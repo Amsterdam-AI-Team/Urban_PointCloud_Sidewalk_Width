@@ -16,10 +16,11 @@ class Cluster2Polygon:
     """
 
     def __init__(self, grid_size=0.05, min_component_size=100,
-                 use_concave=False, alpha=0.5):
+                 use_concave=False, concave_min_area=1., alpha=0.5):
         self.grid_size = grid_size
         self.min_component_size = min_component_size
         self.use_concave = use_concave
+        self.concave_min_area = concave_min_area
         self.alpha = alpha
         self.lcc = LabelConnectedComp(
                                 grid_size=self.grid_size,
@@ -51,7 +52,14 @@ class Cluster2Polygon:
             cc_points = points[cc_mask, :2]
             # TODO: use labels to determine obstacle type.
             obstacle_type = 'obstacle'
-            if self.use_concave:
+            convex_poly = Polygon(cc_points[ConvexHull(cc_points).vertices])
+            if ((not self.use_concave)
+                    or convex_poly.area < self.concave_min_area):
+                obstacle_type = 'convex'
+                obstacle_polygons.append(convex_poly)
+                obstacle_types.append(obstacle_type)
+            else:
+                obstacle_type = 'concave'
                 hull, _ = alpha_shape(cc_points, alpha=self.alpha)
                 if type(hull) == MultiPolygon:
                     for part in hull.geoms:
@@ -60,10 +68,6 @@ class Cluster2Polygon:
                 else:
                     obstacle_polygons.append(hull)
                     obstacle_types.append(obstacle_type)
-            else:
-                hull_points = cc_points[ConvexHull(cc_points).vertices]
-                obstacle_polygons.append(Polygon(hull_points))
-                obstacle_types.append(obstacle_type)
 
         logger.debug(f'{len(obstacle_polygons)} obstacles polygons extracted.')
 
