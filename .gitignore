@@ -11,6 +11,11 @@
 *.qgz
 *.html
 *.png
+*.shp
+*.cpg
+*.dbf
+*.shx
+*.prj
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
