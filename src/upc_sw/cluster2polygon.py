@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import ConvexHull
-from shapely.geometry import MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon
 
 from upcp.region_growing.label_connected_comp import LabelConnectedComp
 
@@ -62,7 +62,7 @@ class Cluster2Polygon:
                     obstacle_types.append(obstacle_type)
             else:
                 hull_points = cc_points[ConvexHull(cc_points).vertices]
-                obstacle_polygons.append(hull_points.tolist())
+                obstacle_polygons.append(Polygon(hull_points))
                 obstacle_types.append(obstacle_type)
 
         logger.debug(f'{len(obstacle_polygons)} obstacles polygons extracted.')
