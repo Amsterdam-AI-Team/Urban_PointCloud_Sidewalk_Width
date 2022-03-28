@@ -52,7 +52,7 @@ class Cluster2Polygon:
             # TODO: use labels to determine obstacle type.
             obstacle_type = 'obstacle'
             if self.use_concave:
-                hull, _ = alpha_shape(cc_points, alpha=0.5)
+                hull, _ = alpha_shape(cc_points, alpha=self.alpha)
                 if type(hull) == MultiPolygon:
                     for part in hull.geoms:
                         obstacle_polygons.append(part)
