@@ -55,11 +55,9 @@ class Cluster2Polygon:
             convex_poly = Polygon(cc_points[ConvexHull(cc_points).vertices])
             if ((not self.use_concave)
                     or convex_poly.area < self.concave_min_area):
-                obstacle_type = 'convex'
                 obstacle_polygons.append(convex_poly)
                 obstacle_types.append(obstacle_type)
             else:
-                obstacle_type = 'concave'
                 hull, _ = alpha_shape(cc_points, alpha=self.alpha)
                 if type(hull) == MultiPolygon:
                     for part in hull.geoms:
