@@ -1,6 +1,7 @@
 from shapely.geometry import LineString
 from shapely.geometry import Point, MultiPoint, MultiLineString
 from shapely.ops import nearest_points
+import pandas as pd
 
 
 def remove_short_lines(line):
@@ -81,19 +82,23 @@ def polygon_to_multilinestring(polygon):
 
 
 def get_avg_distances(row):
+    
     avg_distances = []
-
+    min_distances = []
+    
     sidewalk_lines = polygon_to_multilinestring(row.geometry)
-
+    
     for segment in row.segments:
+        
         points = interpolate(segment)
-
+        
         distances = []
-
-        for point in points.geoms:
+        
+        for point in points:
             p1, p2 = nearest_points(sidewalk_lines, point)
             distances.append(p1.distance(p2))
-
+            
         avg_distances.append(sum(distances) / len(distances))
-
-    return avg_distances
+        min_distances.append(min(distances))
+    
+    return pd.Series([avg_distances, min_distances])
