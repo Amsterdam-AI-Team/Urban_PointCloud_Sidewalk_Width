@@ -2,7 +2,7 @@
 M3C2VER=1
 ExportDensityAtProjScale=false
 ExportStdDevInfo=false
-MaxThreadCount=12
+MaxThreadCount={cpu_count}
 MinPoints4Stat=5
 NormalMaxScale=1.416222
 NormalMinScale=0.354055
