@@ -52,7 +52,9 @@ class Cluster2Polygon:
             cc_points = points[cc_mask, :2]
             # TODO: use labels to determine obstacle type.
             obstacle_type = 'obstacle'
-            convex_poly = Polygon(cc_points[ConvexHull(cc_points).vertices])
+            # Set qhull_options to QJ to prevent errors for near-empty shapes.
+            convex_poly = Polygon(cc_points[ConvexHull(
+                                    cc_points, qhull_options='QJ').vertices])
             if ((not self.use_concave)
                     or convex_poly.area < self.concave_min_area):
                 obstacle_polygons.append(convex_poly)
