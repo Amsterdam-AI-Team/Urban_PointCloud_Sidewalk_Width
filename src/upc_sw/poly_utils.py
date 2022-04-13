@@ -20,7 +20,7 @@ def fix_invalid(poly):
     return poly
 
 
-def remove_short_lines(line):
+def remove_short_lines(line, max_line_length=5):
     if line.type == 'MultiLineString':
         passing_lines = []
 
@@ -38,7 +38,7 @@ def remove_short_lines(line):
             if p1.disjoint(other_lines):
                 is_deadend = True
 
-            if not is_deadend or linestring.length > 5:
+            if not is_deadend or linestring.length > max_line_length:
                 passing_lines.append(linestring)
 
         return sg.MultiLineString(passing_lines)
