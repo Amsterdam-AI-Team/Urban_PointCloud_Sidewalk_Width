@@ -22,6 +22,15 @@ def fix_invalid(poly):
     return poly
 
 
+def extract_interior(poly):
+    if poly.interiors:
+        int_polys = sg.MultiPolygon([sg.Polygon(list(lr.coords))
+                                     for lr in poly.interiors])
+        return sg.Polygon(list(poly.exterior.coords)), int_polys
+    else:
+        return poly, sg.MultiPolygon()
+
+
 def get_centerlines(polygon):
     ''' Save a NaN value when centerline calculation fails. '''
     try:

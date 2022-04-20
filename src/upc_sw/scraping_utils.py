@@ -20,7 +20,8 @@ TERRAS_use_columns = ['geometry', 'zaaknummer', 'naam']
 
 def get_terras_data_for_bbox(bbox, layers=None):
     """Scrape 'terras' data in a given bounding box."""
-    gdf = gpd.GeoDataFrame(columns=TERRAS_use_columns, crs=CRS)
+    gdf = gpd.GeoDataFrame(columns=TERRAS_use_columns,
+                           geometry='geometry', crs=CRS)
     gdf.index.name = 'id'
 
     params = 'REQUEST=GetFeature&' \
@@ -52,7 +53,8 @@ def get_terras_data_for_bbox(bbox, layers=None):
 
 def get_bgt_data_for_bbox(bbox, layers):
     """Scrape BGT data in a given bounding box."""
-    gdf = gpd.GeoDataFrame(columns=BGT_use_columns, crs=CRS)
+    gdf = gpd.GeoDataFrame(columns=BGT_use_columns,
+                           geometry='geometry', crs=CRS)
     gdf.index.name = 'ogc_fid'
 
     content = []
@@ -63,7 +65,7 @@ def get_bgt_data_for_bbox(bbox, layers):
         layer_type = BGT_namedict[layer.split('_')[0]]
 
         # Parse the downloaded json response.
-        if json_content is not None:
+        if json_content is not None and len(json_content['features']) > 0:
             gdf = gpd.GeoDataFrame.from_features(
                                 json_content, crs=CRS).set_index('ogc_fid')
             gdf = gdf[gdf['bgt_status'] == 'bestaand']
