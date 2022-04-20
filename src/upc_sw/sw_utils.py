@@ -16,7 +16,7 @@ def sidewalk_clip(points, tilecode, sw_poly_gdf,
                 sw_poly_gdf.intersects(poly_utils.tilecode_to_poly(tilecode))]
     if len(sw_polys) == 0:
         logging.info(f'No sidewalk polygons for tile {tilecode}.')
-        return sw_mask
+        return sw_mask, len(sw_polys) > 0
 
     for polygon in sw_polys.geometry:
         clip_mask = clip_utils.poly_clip(points, polygon)
@@ -49,7 +49,7 @@ def sidewalk_clip(points, tilecode, sw_poly_gdf,
     logging.info(f'{np.count_nonzero(sw_mask)} points clipped in '
                  + f'{len(sw_polys)} sidewalk polygons.')
 
-    return sw_mask
+    return sw_mask, len(sw_polys) > 0
 
 
 def create_label_mask(labels, target_labels=None, exclude_labels=None):
