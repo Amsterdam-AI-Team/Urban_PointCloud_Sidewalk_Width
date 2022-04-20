@@ -1,5 +1,6 @@
 import shapely.geometry as sg
 import shapely.ops as so
+from centerline.geometry import Centerline
 import numpy as np
 import pandas as pd
 
@@ -19,6 +20,16 @@ def fix_invalid(poly):
         if type(poly) == sg.Polygon and orig_multi:
             poly = sg.MultiPolygon([poly])
     return poly
+
+
+def get_centerlines(polygon):
+    ''' Save a NaN value when centerline calculation fails. '''
+    try:
+        x = Centerline(polygon)
+    except Exception as e:
+        print(e)  # TODO also print rows.name[0] ??
+        x = np.nan
+    return x
 
 
 def remove_short_lines(line, max_line_length=5):
@@ -98,13 +109,13 @@ def polygon_to_multilinestring(polygon):
                               + [line for line in polygon.interiors])
 
 
-def get_avg_width(row, resolution=1, precision=2):
+def get_avg_width(poly, segments, resolution=1, precision=2):
     avg_width = []
     min_width = []
 
-    sidewalk_lines = polygon_to_multilinestring(row.geometry)
+    sidewalk_lines = polygon_to_multilinestring(poly)
 
-    for segment in row.segments:
+    for segment in segments:
         points = interpolate(segment, resolution)
 
         distances = []
