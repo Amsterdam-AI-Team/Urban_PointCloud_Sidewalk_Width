@@ -1,5 +1,6 @@
 import shapely.geometry as sg
 import shapely.ops as so
+import numpy as np
 import pandas as pd
 
 from upcp.utils import las_utils
@@ -44,6 +45,7 @@ def remove_short_lines(line, max_line_length=5):
         return sg.MultiLineString(passing_lines)
 
     if line.type == 'LineString':
+        # TODO: if line.length > max_line_length ?
         return line
 
 
@@ -65,31 +67,30 @@ def get_segments(line):
     return line_segments
 
 
-def interpolate_by_distance(linestring):
-    distance = 1
+def interpolate_by_distance(linestring, resolution=1):
     all_points = []
-    count = round(linestring.length / distance) + 1
+    count = round(linestring.length / resolution) + 1
 
     if count == 1:
         all_points.append(linestring.interpolate(linestring.length / 2))
     else:
         for i in range(count):
-            all_points.append(linestring.interpolate(distance * i))
+            all_points.append(linestring.interpolate(resolution * i))
 
     return all_points
 
 
-def interpolate(line):
+def interpolate(line, resolution=1):
     if line.type == 'MultiLineString':
         all_points = []
 
         for linestring in line:
-            all_points.extend(interpolate_by_distance(linestring))
+            all_points.extend(interpolate_by_distance(linestring, resolution))
 
         return sg.MultiPoint(all_points)
 
     if line.type == 'LineString':
-        return sg.MultiPoint(interpolate_by_distance(line))
+        return sg.MultiPoint(interpolate_by_distance(line, resolution))
 
 
 def polygon_to_multilinestring(polygon):
@@ -97,22 +98,23 @@ def polygon_to_multilinestring(polygon):
                               + [line for line in polygon.interiors])
 
 
-def get_avg_distances(row):
-    avg_distances = []
-    min_distances = []
+def get_avg_width(row, resolution=1, precision=2):
+    avg_width = []
+    min_width = []
 
     sidewalk_lines = polygon_to_multilinestring(row.geometry)
 
     for segment in row.segments:
-        points = interpolate(segment)
+        points = interpolate(segment, resolution)
 
         distances = []
 
-        for point in points:
+        for point in points.geoms:
             p1, p2 = so.nearest_points(sidewalk_lines, point)
             distances.append(p1.distance(p2))
 
-        avg_distances.append(sum(distances) / len(distances))
-        min_distances.append(min(distances))
+        avg_width.append(sum(distances) / len(distances) * 2)
+        min_width.append(min(distances) * 2)
 
-    return pd.Series([avg_distances, min_distances])
+    return pd.Series([np.round(avg_width, precision),
+                      np.round(min_width, precision)])
