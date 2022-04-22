@@ -158,7 +158,7 @@ def get_route_color(route_weight):
 def create_df_centerlines(centerline):
     centerline_list = []
 
-    # Create list of all centerlines
+    # Create list of all sub-centerlines
     if centerline.type == 'LineString':
         centerline_list.append(centerline)
 
@@ -168,6 +168,10 @@ def create_df_centerlines(centerline):
 
     # Create dataframe from list
     centerline_df = gpd.GeoDataFrame(centerline_list, columns=['geometry'])
+    
+    # Add length and route weight columns
+    centerline_df['length'] = centerline_df['geometry'].length
+    centerline_df['route_weight'] = np.nan
 
     return centerline_df
 
