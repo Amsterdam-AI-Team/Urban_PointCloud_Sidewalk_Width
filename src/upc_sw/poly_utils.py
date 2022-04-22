@@ -2,7 +2,6 @@ import shapely.geometry as sg
 import shapely.ops as so
 from centerline.geometry import Centerline
 import numpy as np
-import pandas as pd
 import geopandas as gpd
 
 from upcp.utils import las_utils
@@ -137,8 +136,7 @@ def get_avg_width(poly, segments, resolution=1, precision=2):
         avg_width.append(sum(distances) / len(distances) * 2)
         min_width.append(min(distances) * 2)
 
-    return pd.Series([np.round(avg_width, precision),
-                      np.round(min_width, precision)])
+    return np.round(avg_width, precision), np.round(min_width, precision)
 
 
 def get_route_color(route_weight):
@@ -168,7 +166,7 @@ def create_df_centerlines(centerline):
 
     # Create dataframe from list
     centerline_df = gpd.GeoDataFrame(centerline_list, columns=['geometry'])
-    
+
     # Add length and route weight columns
     centerline_df['length'] = centerline_df['geometry'].length
     centerline_df['route_weight'] = np.nan
