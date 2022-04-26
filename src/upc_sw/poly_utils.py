@@ -3,6 +3,7 @@ import shapely.ops as so
 from centerline.geometry import Centerline
 import numpy as np
 import geopandas as gpd
+from geopandas import GeoDataFrame
 
 from upcp.utils import las_utils
 
@@ -146,8 +147,10 @@ def get_route_color(route_weight):
         final_color = 'lightgreen'
     elif (route_weight >= 1000) & (route_weight < 1000000):
         final_color = 'orange'
-    elif route_weight >= 1000000:
+    elif (route_weight >= 1000000) & (route_weight < 1000000000):
         final_color = 'red'
+    elif route_weight == 1000000000:
+        final_color = 'darkred'
     else:
         final_color = 'purple'
     return final_color
@@ -214,3 +217,25 @@ def shorten_linestrings(centerline_df, max_ls_length):
         centerline_df = centerline_df.append(cut_ls_df).reset_index(drop=True)
 
     return centerline_df
+
+
+def remove_interiors(polygon, eps):
+    list_interiors = []
+    
+    for interior in polygon.interiors:
+        p = sg.Polygon(interior)    
+        if p.area > eps:
+            list_interiors.append(interior)
+
+    return(sg.Polygon(polygon.exterior.coords, holes=list_interiors))
+
+
+def create_mls_per_sidewalk(df, crs):
+    mls_list = []
+    
+    for sidewalk_id in df['sidewalk_id'].unique():
+        df_segments_id = df[df['sidewalk_id'] == sidewalk_id]
+        mls_id = sg.MultiLineString(list(df_segments_id['geometry']))
+        mls_list.append(mls_id)
+        
+    return(GeoDataFrame(geometry=mls_list, crs=crs)) 
