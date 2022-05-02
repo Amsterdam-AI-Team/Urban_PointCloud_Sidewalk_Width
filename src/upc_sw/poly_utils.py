@@ -151,6 +151,8 @@ def get_route_color(route_weight):
         final_color = 'red'
     elif route_weight == 1000000000:
         final_color = 'darkred'
+    elif route_weight > 1000000000:
+        final_color = 'grey'
     else:
         final_color = 'purple'
     return final_color
