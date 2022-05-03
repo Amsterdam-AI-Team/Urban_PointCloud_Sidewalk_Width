@@ -1,12 +1,7 @@
 import shapely.geometry as sg
 import shapely.ops as so
-
-from shapely.geometry import LineString, Point, MultiPoint, MultiLineString, Polygon # TODO: align with above
-from shapely.ops import nearest_points
-
+from centerline.geometry import Centerline
 import numpy as np
-import pandas as pd
-
 import geopandas as gpd
 from geopandas import GeoDataFrame
 
@@ -26,6 +21,25 @@ def fix_invalid(poly):
         if type(poly) == sg.Polygon and orig_multi:
             poly = sg.MultiPolygon([poly])
     return poly
+
+
+def extract_interior(poly):
+    if poly.interiors:
+        int_polys = sg.MultiPolygon([sg.Polygon(list(lr.coords))
+                                     for lr in poly.interiors])
+        return sg.Polygon(list(poly.exterior.coords)), int_polys
+    else:
+        return poly, sg.MultiPolygon()
+
+
+def get_centerlines(polygon):
+    ''' Save a NaN value when centerline calculation fails. '''
+    try:
+        x = Centerline(polygon)
+    except Exception as e:
+        print(e)  # TODO also print rows.name[0] ??
+        x = np.nan
+    return x
 
 
 def remove_short_lines(line, max_line_length=5):
@@ -105,13 +119,13 @@ def polygon_to_multilinestring(polygon):
                               + [line for line in polygon.interiors])
 
 
-def get_avg_width(row, resolution=1, precision=2):
+def get_avg_width(poly, segments, resolution=1, precision=2):
     avg_width = []
     min_width = []
 
-    sidewalk_lines = polygon_to_multilinestring(row.geometry)
+    sidewalk_lines = polygon_to_multilinestring(poly)
 
-    for segment in row.segments:
+    for segment in segments:
         points = interpolate(segment, resolution)
 
         distances = []
@@ -123,79 +137,65 @@ def get_avg_width(row, resolution=1, precision=2):
         avg_width.append(sum(distances) / len(distances) * 2)
         min_width.append(min(distances) * 2)
 
-    return pd.Series([np.round(avg_width, precision),
-                      np.round(min_width, precision)])
+    return np.round(avg_width, precision), np.round(min_width, precision)
 
 
 def get_route_color(route_weight):
-    if route_weight == 0: 
-        final_color = 'black'  
-    elif (route_weight > 0) & (route_weight < 1000): 
-        final_color = 'lightgreen'    
-    elif (route_weight >= 1000) & (route_weight < 1000000): 
+    if route_weight == 0:
+        final_color = 'black'
+    elif (route_weight > 0) & (route_weight < 1000):
+        final_color = 'lightgreen'
+    elif (route_weight >= 1000) & (route_weight < 1000000):
         final_color = 'orange'
-    elif route_weight >= 1000000:
+    elif (route_weight >= 1000000) & (route_weight < 1000000000):
         final_color = 'red'
+    elif route_weight == 1000000000:
+        final_color = 'darkred'
+    elif route_weight > 1000000000:
+        final_color = 'grey'
     else:
         final_color = 'purple'
     return final_color
 
 
-def preprocess_bgt_data(df_raw):
-    # Clean polygon format
-    df_raw['polygon_clean'] = df_raw['polygon'].str.replace(r'[', '')
-    df_raw['polygon_clean'] = df_raw['polygon_clean'].str.replace(r']', '')
-    df_raw['polygon_clean'] = df_raw['polygon_clean'].str.replace(r' ', '')
-    df_raw['polygon_clean'] = df_raw['polygon_clean'].apply(lambda x: x.split(',')) 
-
-    # Create lon and lat coordinates
-    df_raw['lon'] = df_raw['polygon_clean'].apply(lambda x: np.array(x[0:][::2], dtype=np.float32))
-    df_raw['lat'] = df_raw['polygon_clean'].apply(lambda x: np.array(x[1:][::2], dtype=np.float32))
-
-    # Create proper polygon geometry from lon and lat
-    df_raw['geometry'] = df_raw.apply(lambda x: Polygon(zip(x['lon'], x['lat'])), axis = 1)
-    df_raw = GeoDataFrame(df_raw, geometry = 'geometry', crs='epsg:28992')
-
-    # Drop unneccesary columns
-    df = df_raw.drop(['polygon', 'polygon_clean', 'lon', 'lat'], axis = 1)
-    
-    return df
-
-
 def create_df_centerlines(centerline):
     centerline_list = []
-    
-    # Create list of all centerlines
+
+    # Create list of all sub-centerlines
     if centerline.type == 'LineString':
         centerline_list.append(centerline)
-        
+
     if centerline.type == 'MultiLineString':
         for line in centerline:
-            centerline_list.append(line) 
-    
+            centerline_list.append(line)
+
     # Create dataframe from list
-    centerline_df = GeoDataFrame(centerline_list, columns=['geometry'])
-    
+    centerline_df = gpd.GeoDataFrame(centerline_list, columns=['geometry'])
+
+    # Add length and route weight columns
+    centerline_df['length'] = centerline_df['geometry'].length
+    centerline_df['route_weight'] = np.nan
+
     return centerline_df
 
 
 def cut(line, distance):
     # Cut a line in two at a distance from its starting point
     if distance <= 0.0 or distance >= line.length:
-        return [LineString(line)]
+        return [sg.LineString(line)]
     coords = list(line.coords)
     for i, p in enumerate(coords):
-        pd = line.project(Point(p))
+        pd = line.project(sg.Point(p))
         if pd == distance:
             return [
-                LineString(coords[:i+1]),
-                LineString(coords[i:])]
+                sg.LineString(coords[:i+1]),
+                sg.LineString(coords[i:])]
         if pd > distance:
             cp = line.interpolate(distance)
             return [
-                LineString(coords[:i] + [(cp.x, cp.y)]),
-                LineString([(cp.x, cp.y)] + coords[i:])]
-        
+                sg.LineString(coords[:i] + [(cp.x, cp.y)]),
+                sg.LineString([(cp.x, cp.y)] + coords[i:])]
+
 
 def shorten_linestrings(centerline_df, max_ls_length):
     # Check if we have a linestring that is too long
@@ -205,11 +205,11 @@ def shorten_linestrings(centerline_df, max_ls_length):
         id_longest_ls = centerline_df['length'].idxmax()
         longest_ls = centerline_df.iloc[[id_longest_ls]]['geometry'].values[0]
 
-        # Cut linestring 
+        # Cut linestring
         cut_ls = cut(longest_ls, max_ls_length-0.01)
 
         # Create dataframe from cut linestrings, including length
-        cut_ls_df = GeoDataFrame(cut_ls, columns = ['geometry'])
+        cut_ls_df = gpd.GeoDataFrame(cut_ls, columns=['geometry'])
         cut_ls_df['length'] = cut_ls_df['geometry'].length
 
         # Remove long linestring that was cut from original dataframe
@@ -217,5 +217,27 @@ def shorten_linestrings(centerline_df, max_ls_length):
 
         # Add dataframe with cut linestrings to original dataframe
         centerline_df = centerline_df.append(cut_ls_df).reset_index(drop=True)
-    
+
     return centerline_df
+
+
+def remove_interiors(polygon, eps):
+    list_interiors = []
+    
+    for interior in polygon.interiors:
+        p = sg.Polygon(interior)    
+        if p.area > eps:
+            list_interiors.append(interior)
+
+    return(sg.Polygon(polygon.exterior.coords, holes=list_interiors))
+
+
+def create_mls_per_sidewalk(df, crs):
+    mls_list = []
+    
+    for sidewalk_id in df['sidewalk_id'].unique():
+        df_segments_id = df[df['sidewalk_id'] == sidewalk_id]
+        mls_id = sg.MultiLineString(list(df_segments_id['geometry']))
+        mls_list.append(mls_id)
+        
+    return(GeoDataFrame(geometry=mls_list, crs=crs)) 
