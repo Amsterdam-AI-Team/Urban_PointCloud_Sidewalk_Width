@@ -2,6 +2,7 @@ import shapely.geometry as sg
 import shapely.ops as so
 from centerline.geometry import Centerline
 import numpy as np
+import pandas as pd
 import geopandas as gpd
 from geopandas import GeoDataFrame
 
@@ -42,7 +43,7 @@ def get_centerlines(polygon):
     return x
 
 
-def remove_short_lines(line, max_line_length=5):
+def remove_short_lines(line, min_se_length=5):
     if line.type == 'MultiLineString':
         passing_lines = []
 
@@ -60,13 +61,12 @@ def remove_short_lines(line, max_line_length=5):
             if p1.disjoint(other_lines):
                 is_deadend = True
 
-            if not is_deadend or linestring.length > max_line_length:
+            if not is_deadend or linestring.length > min_se_length:
                 passing_lines.append(linestring)
 
         return sg.MultiLineString(passing_lines)
 
     if line.type == 'LineString':
-        # TODO: if line.length > max_line_length ?
         return line
 
 
@@ -140,18 +140,38 @@ def get_avg_width(poly, segments, resolution=1, precision=2):
     return np.round(avg_width, precision), np.round(min_width, precision)
 
 
+def get_avg_width_cl(poly, segments, resolution=1, precision=2):
+
+    sidewalk_lines = polygon_to_multilinestring(poly)
+
+    points = interpolate(segments, resolution)
+
+    distances = []
+
+    for point in points.geoms:
+        p1, p2 = so.nearest_points(sidewalk_lines, point)
+        distances.append(p1.distance(p2))
+
+    avg_width = sum(distances) / len(distances) * 2
+    min_width = min(distances) * 2
+
+    return pd.Series([np.round(avg_width, precision), np.round(min_width, precision)])
+
+
 def get_route_color(route_weight):
     if route_weight == 0:
         final_color = 'black'
     elif (route_weight > 0) & (route_weight < 1000):
-        final_color = 'lightgreen'
+        final_color = 'green'
     elif (route_weight >= 1000) & (route_weight < 1000000):
-        final_color = 'orange'
+        final_color = 'lightgreen'
     elif (route_weight >= 1000000) & (route_weight < 1000000000):
+        final_color = 'orange'
+    elif (route_weight >= 1000000000) & (route_weight < 1000000000000):
         final_color = 'red'
-    elif route_weight == 1000000000:
+    elif route_weight == 1000000000000:
         final_color = 'darkred'
-    elif route_weight > 1000000000:
+    elif route_weight > 1000000000000:
         final_color = 'grey'
     else:
         final_color = 'purple'
@@ -196,28 +216,31 @@ def cut(line, distance):
                 sg.LineString(coords[:i] + [(cp.x, cp.y)]),
                 sg.LineString([(cp.x, cp.y)] + coords[i:])]
 
-
+        
 def shorten_linestrings(centerline_df, max_ls_length):
+       
     # Check if we have a linestring that is too long
     while centerline_df['length'].max() > max_ls_length:
 
         # Select longest linestring
         id_longest_ls = centerline_df['length'].idxmax()
-        longest_ls = centerline_df.iloc[[id_longest_ls]]['geometry'].values[0]
-
+        longest_ls = centerline_df.iloc[[id_longest_ls]]['centerlines'].values[0]
+        
         # Cut linestring
         cut_ls = cut(longest_ls, max_ls_length-0.01)
 
         # Create dataframe from cut linestrings, including length
-        cut_ls_df = gpd.GeoDataFrame(cut_ls, columns=['geometry'])
-        cut_ls_df['length'] = cut_ls_df['geometry'].length
+        cut_ls_df = gpd.GeoDataFrame(cut_ls, columns=['centerlines']).set_geometry('centerlines')
+        cut_ls_df['length'] = cut_ls_df['centerlines'].length  
+        
+        # Add index back
+        cut_ls_df['index'] = centerline_df['index'][id_longest_ls]
 
         # Remove long linestring that was cut from original dataframe
         centerline_df = centerline_df.drop(index=id_longest_ls)
 
         # Add dataframe with cut linestrings to original dataframe
         centerline_df = centerline_df.append(cut_ls_df).reset_index(drop=True)
-
     return centerline_df
 
 
