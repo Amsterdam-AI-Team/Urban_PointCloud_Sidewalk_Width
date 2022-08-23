@@ -5,7 +5,7 @@ This repository contains a sidewalk width calculation approach by considering st
 | ![Point cloud](./media/examples/capture3.png) | ![Objects above ground](./media/examples/capture4.png)|![Static objects](./media/examples/capture5.png) |
 |:---:|:---:|:---:|
 
-<b>Example:</b> static objects (obstacles) in the point cloud on the sidewalk. <br/>
+<b>Example:</b> (left) The point cloud with the sidewalk and points above it labelled. (middle) Objects above the sidewalk. (right) M3C2 algorithm performed on two pointclouds. <br/>
 
 | ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
 |:---:|:---:|:---:|
