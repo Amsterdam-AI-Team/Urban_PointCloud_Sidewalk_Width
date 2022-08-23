@@ -10,7 +10,7 @@ This repository contains a sidewalk width calculation approach by considering st
 | ![Sidewalk data with obstacles](./media/examples/sidewalk_with_obstacles.png) | ![Centerlines](./media/examples/centerlines.png)|![sidewalk_width](./media/examples/sidewalk_width.png) |
 |:---:|:---:|:---:|
 
-<b>Example:</b> (left) Points above the sidewalk. (middle) Centerline segments. (right) Width calculated along centerline segments. <br/>
+<b>Example:</b> (left) M3C2 result without the third dimension. (middle) Centerline segments. (right) Width calculated along centerline segments. <br/>
 
 
 ---
