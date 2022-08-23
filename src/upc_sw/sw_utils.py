@@ -8,15 +8,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def sidewalk_clip(points, tilecode, sw_polys,
+def sidewalk_clip(points, tilecode, sw_poly_gdf,
                   ahn_reader=None, max_height=2.0):
     sw_mask = np.zeros((len(points),), dtype=bool)
 
+    sw_polys = sw_poly_gdf[
+                sw_poly_gdf.intersects(poly_utils.tilecode_to_poly(tilecode))]
     if len(sw_polys) == 0:
         logging.info(f'No sidewalk polygons for tile {tilecode}.')
         return sw_mask, len(sw_polys) > 0
 
-    for polygon in sw_polys:
+    for polygon in sw_polys.geometry:
         clip_mask = clip_utils.poly_clip(points, polygon)
         sw_mask = sw_mask | clip_mask
 
