@@ -38,7 +38,6 @@ This repository contains a sidewalk width calculation approach by considering st
     ```bash
     pip install -r requirements.txt
     ```
-    For [notebook 3](https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Sidewalk_Width/blob/main/notebooks/3.%20Change%20detection%20M3C2.ipynb), we create a clean virtual environment. This, to avoid incompatibility issues when using the [CloudComPy](https://github.com/CloudCompare/CloudComPy) package and other packages. 
 
 3. Additionally, install our [Urban PointCloud Processing](https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Processing) package:
     ```bash
@@ -47,7 +46,9 @@ This repository contains a sidewalk width calculation approach by considering st
 
 4. Finally, install `cccorelib` and `pycc` by following the [instructions on their GitHub page](https://github.com/tmontaigu/CloudCompare-PythonPlugin/blob/master/docs/building.rst#building-as-independent-wheels). Please note, these two packages are not available on the Python Package Index (PyPi).
 
-5. Check out the [notebooks](notebooks) for a demonstration.
+5. For [notebook 3](https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Sidewalk_Width/blob/main/notebooks/3.%20Change%20detection%20M3C2.ipynb), we create a clean virtual environment and follow the instructions on the [CloudComPy](https://github.com/CloudCompare/CloudComPy) page to install this package. This, to avoid incompatibility issues when using the `CloudComPy` package and the `cccorelib` and `pycc` packages. 
+
+6. Check out the [notebooks](notebooks) for a demonstration.
 
 ---
 
