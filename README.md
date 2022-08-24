@@ -38,7 +38,7 @@ This repository contains a sidewalk width calculation approach by considering st
     ```bash
     pip install -r requirements.txt
     ```
-    For notebook 3, we create a clean virtual environment. This, to avoid incompatibility issues when using the [CloudComPy](https://github.com/CloudCompare/CloudComPy) package and other packages. 
+    For [notebook 3](https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Sidewalk_Width/blob/main/notebooks/3.%20Change%20detection%20M3C2.ipynb), we create a clean virtual environment. This, to avoid incompatibility issues when using the [CloudComPy](https://github.com/CloudCompare/CloudComPy) package and other packages. 
 
 3. Additionally, install our [Urban PointCloud Processing](https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Processing) package:
     ```bash
