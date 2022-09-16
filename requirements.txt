@@ -8,3 +8,4 @@ scipy==1.8.0
 Shapely==1.8.2
 tqdm==4.64.0
 momepy==0.5.3
+https://github.com/Amsterdam-AI-Team/Urban_PointCloud_Processing/releases/download/v0.1/upcp-0.1-py3-none-any.whl
