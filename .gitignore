@@ -17,6 +17,8 @@
 *.shx
 *.prj
 *.gpkg
+*.pkl
+*.geojson
 
 # Mac OS
 *.DS_Store
