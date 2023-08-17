@@ -161,17 +161,23 @@ def get_avg_width_cl(poly, segments, resolution=1, precision=2):
 def get_route_color(route_weight):
     if route_weight == 0:
         final_color = 'black'
-    elif (route_weight > 0) & (route_weight < 1000):
+    elif (route_weight > 0) & (route_weight < 100):
         final_color = 'green'
-    elif (route_weight >= 1000) & (route_weight < 1000000):
-        final_color = 'lightgreen'
-    elif (route_weight >= 1000000) & (route_weight < 1000000000):
+    elif (route_weight >= 100) & (route_weight < 10000):
+        final_color = 'limegreen'
+    elif (route_weight >= 10000) & (route_weight < 1000000):
+        final_color = 'greenyellow'
+    elif (route_weight >= 1000000) & (route_weight < 100000000):
+        final_color = 'yellow'
+    elif (route_weight >= 100000000) & (route_weight < 10000000000):
         final_color = 'orange'
-    elif (route_weight >= 1000000000) & (route_weight < 1000000000000):
+    elif (route_weight >= 10000000000) & (route_weight < 1000000000000):
         final_color = 'red'
-    elif route_weight == 1000000000000:
+    elif (route_weight >= 1000000000000) & (route_weight < 100000000000000):
         final_color = 'darkred'
-    elif route_weight > 1000000000000:
+    elif route_weight == 100000000000000:
+        final_color = 'brown'
+    elif route_weight > 100000000000000:
         final_color = 'grey'
     else:
         final_color = 'purple'
