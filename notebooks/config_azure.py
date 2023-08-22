@@ -11,7 +11,7 @@ segments_file = f'{out_folder}processed_data/output/sidewalk_segments.gpkg'  # s
 segments_image = f'{out_folder}processed_data/output/images/sidewalk_segments_all.png' # sidewalk_segments.png or sidewalk_segments_all.png
 
 # BGT path
-bgt_road_file = f'{out_folder}processed_data/bgt/bgt_voetpad.gpkg'  # bgt_voetpad.gpkg or bgt_voetpad_small.gpkg
+bgt_road_file = f'{out_folder}processed_data/bgt/bgt_voetpad.gpkg'  # bgt_voetpad_small.gpkg or bgt_voetpad.gpkg
 
 # Intermedia files notebook 6
 bgt_cl_file = f'{out_folder}processed_data/output/bgt_cl.pkl'  # bgt_cl_east.pkl or bgt_cl.pkl
