@@ -8,14 +8,20 @@ tmp_file = f'{out_folder}sw_seg_tmp.pkl'
 
 # Output path notebook 5 / input path notebook 6
 segments_file = f'{out_folder}processed_data/output/sidewalk_segments.gpkg'  # sidewalk_segments_small.gpkg or sidewalk_segments.gpkg
+segments_image = f'{out_folder}processed_data/output/images/sidewalk_segments_all.png' # sidewalk_segments.png or sidewalk_segments_all.png
 
 # BGT path
-bgt_road_file = f'{out_folder}processed_data/bgt/bgt_voetpad_small.gpkg'  # bgt_voetpad.gpkg
+bgt_road_file = f'{out_folder}processed_data/bgt/bgt_voetpad.gpkg'  # bgt_voetpad.gpkg or bgt_voetpad_small.gpkg
+
+# Intermedia files notebook 6
+bgt_cl_file = f'{out_folder}processed_data/output/bgt_cl.pkl'  # bgt_cl_east.pkl or bgt_cl.pkl
+bgt_fw_file = f'{out_folder}processed_data/output/bgt_fw.pkl'  # bgt_fw_east.pkl or bgt_fw.pkl
+final_df_file = f'{out_folder}processed_data/output/final_df_tmp_all.pkl' # final_df_tmp.pkl or final_df_tmp_all.pkl
 
 # Final output paths
-output_file = f'{out_folder}processed_data/output/final_output_segments_all.gpkg'
-output_image = f'{out_folder}processed_data/output/final_output_image_all.png'
-output_image_no = f'{out_folder}processed_data/output/final_output_image_no_all.png'
+output_file = f'{out_folder}processed_data/output/final_output_segments.gpkg'  # final_output_segments_small.gpkg or final_output_segments.gpkg
+output_image = f'{out_folder}processed_data/output/images/final_output_image.png'  # final_output_image_small.png or final_output_image.png
+output_image_no = f'{out_folder}processed_data/output/images/final_output_image_no.png'  # final_output_image_no_small.png or final_output_image_no.png
 
 # Set Coordinate Reference System
 CRS = 'epsg:28992'

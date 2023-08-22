@@ -8,9 +8,15 @@ tmp_file = f'{out_folder}sw_seg_tmp.pkl'
 
 # Output path notebook 5 / input path notebook 6
 segments_file = f'{out_folder}sidewalk_segments.gpkg'
+segments_image = f'{out_folder}sidewalk_segments_all.png'
 
 # BGT path
 bgt_road_file = '../datasets/bgt/bgt_voetpad.gpkg' 
+
+# Intermedia files notebook 6
+bgt_cl_file = f'{out_folder}bgt_cl.pkl'
+bgt_fw_file = f'{out_folder}bgt_fw.pkl'
+final_df_file = f'{out_folder}final_df_tmp_all.pkl'
 
 # Final output paths 
 output_file = f'{out_folder}final_output_segments_all.gpkg'
